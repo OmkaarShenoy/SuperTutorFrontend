@@ -33,7 +33,7 @@ const LessonDetail = () => {
     e.preventDefault();
 
     if (userSolution.trim() === '') {
-      alert('Please enter your solution.');
+      alert('Please enter your solution here.');
       return;
     }
 

@@ -9,9 +9,8 @@ const LessonDetail = () => {
   const { id } = useParams();
   const [lesson, setLesson] = useState(null);
   const [userSolution, setUserSolution] = useState('');
-  const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(false);
-  const [chatMessages, setChatMessages] = useState([]);
+  const [chatMessages, setChatMessages] = useState([]); // Array of { sender: 'user' | 'ai', message: string }
   const [chatInput, setChatInput] = useState('');
 
   useEffect(() => {
@@ -33,19 +32,23 @@ const LessonDetail = () => {
     e.preventDefault();
 
     if (userSolution.trim() === '') {
-      alert('Please enter your solution here.');
+      alert('Please enter your solution.');
       return;
     }
 
     setLoading(true);
-    setFeedback('');
 
     try {
       const response = await axios.post(`/lessons/${id}/submit`, {
         userSolution,
       });
 
-      setFeedback(response.data.feedback);
+      // Assuming response.data has 'feedback' and 'html'
+      const feedback = response.data.feedback;
+      setChatMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: 'ai', message: feedback },
+      ]);
     } catch (error) {
       console.error('Error submitting solution:', error);
       alert('Failed to submit solution. Please try again.');
@@ -72,7 +75,10 @@ const LessonDetail = () => {
       setChatMessages((prevMessages) => [...prevMessages, { sender: 'ai', message: aiReply }]);
     } catch (error) {
       console.error('Error in chat:', error);
-      setChatMessages((prevMessages) => [...prevMessages, { sender: 'ai', message: 'Sorry, I could not process that.' }]);
+      setChatMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: 'ai', message: 'Sorry, I could not process that.' },
+      ]);
     }
   };
 
@@ -125,13 +131,8 @@ const LessonDetail = () => {
           </form>
         </div>
 
-        {/* Bottom Right Quadrant: Feedback and Chat */}
+        {/* Bottom Right Quadrant: Chat and Feedback */}
         <div className="quadrant quadrant-feedback">
-          <h2>Feedback</h2>
-          <div className="feedback">
-            {feedback ? <p>{feedback}</p> : <p>No feedback yet. Submit your solution to receive feedback.</p>}
-          </div>
-          <hr />
           <h2>Chat with AI</h2>
           <div className="chat-container">
             <div className="chat-messages">

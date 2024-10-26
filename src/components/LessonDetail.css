@@ -1,0 +1,204 @@
+/* src/components/LessonDetail.css */
+
+.lesson-detail-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  height: 100vh;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: var(--bg-color);
+}
+
+.quadrant {
+  background-color: var(--box-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+}
+
+.quadrant h2 {
+  font-size: 18px;
+  color: var(--primary-text-color);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.quadrant-prompt {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+.quadrant-prompt p {
+  font-size: 14px;
+  color: var(--secondary-text-color);
+  line-height: 1.6;
+}
+
+.quadrant-prompt strong {
+  color: var(--primary-text-color);
+}
+
+.quadrant-html {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  background-color: var(--box-bg-color);
+}
+
+.quadrant-editor {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  display: flex;
+  flex-direction: column;
+}
+
+textarea {
+  resize: vertical;
+  padding: 12px;
+  font-size: 14px;
+  color: var(--primary-text-color);
+  background-color: #333;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  min-height: 150px;
+  margin-bottom: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  transition: border-color 0.2s ease;
+}
+
+textarea:focus {
+  border-color: var(--highlight-color);
+  outline: none;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #fff;
+  background-color: var(--button-bg-color);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  align-self: flex-start;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg-color);
+}
+
+.quadrant-feedback {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--box-bg-color);
+}
+
+.feedback {
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  background-color: var(--feedback-bg-color);
+  color: var(--primary-text-color);
+  border: 1px solid var(--border-color);
+  margin-bottom: 10px;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: var(--chat-bg-color);
+  overflow-y: auto;
+  margin-bottom: 10px;
+  color: var(--primary-text-color);
+}
+
+.chat-input {
+  display: flex;
+}
+
+.chat-input textarea {
+  flex: 1;
+  margin-right: 10px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  font-family: var(--font-family);
+  background-color: #333;
+  color: var(--primary-text-color);
+  resize: vertical;
+}
+
+.chat-input button {
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: var(--highlight-color);
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.chat-input button:hover {
+  background-color: var(--button-hover-bg-color);
+}
+
+.chat-messages div {
+  margin-bottom: 10px;
+}
+
+.chat-messages .user-message {
+  text-align: right;
+}
+
+.chat-messages .ai-message {
+  text-align: left;
+}
+
+.chat-messages .user-message span,
+.chat-messages .ai-message span {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 12px;
+  max-width: 80%;
+  word-wrap: break-word;
+  color: var(--primary-text-color);
+}
+
+.chat-messages .user-message span {
+  background-color: var(--highlight-color);
+  color: white;
+}
+
+.chat-messages .ai-message span {
+  background-color: #444;
+  color: var(--primary-text-color);
+}
+
+@media (max-width: 768px) {
+  .lesson-detail-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+
+  .quadrant-prompt,
+  .quadrant-html,
+  .quadrant-editor,
+  .quadrant-feedback {
+    grid-column: 1 / 2;
+    grid-row: auto;
+  }
+}

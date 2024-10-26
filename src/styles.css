@@ -1,0 +1,38 @@
+/* src/styles.css */
+:root {
+  --bg-color: #181818; /* Dark background */
+  --box-bg-color: #282828; /* Lighter black for boxes */
+  --primary-text-color: #f0f0f0; /* White text */
+  --secondary-text-color: #d0d0d0; /* Slightly grayish text for secondary content */
+  --border-color: #333;
+  --highlight-color: #4a90e2;
+  --button-bg-color: #4a90e2;
+  --button-hover-bg-color: #357abd;
+  --feedback-bg-color: #1f1f1f;
+  --chat-bg-color: #1b1b1b;
+  --error-color: #d9534f;
+  
+  --font-family: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--primary-text-color);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h2 {
+  font-size: 18px;
+  color: var(--primary-text-color);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+p, label {
+  font-size: 14px;
+  color: var(--secondary-text-color);
+  line-height: 1.5;
+}

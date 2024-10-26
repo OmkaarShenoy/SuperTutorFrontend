@@ -1,38 +1,130 @@
-.App {
-  text-align: center;
+/* src/App.css */
+
+.lesson-detail-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  height: 100vh;
+  gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.quadrant {
+  border: 1px solid #ccc;
+  padding: 10px;
+  overflow: auto;
+  background-color: #222222;
+  border-radius: 8px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.quadrant-prompt {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.quadrant-pdf {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+.quadrant-editor {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.quadrant-feedback {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  display: flex;
+  flex-direction: column;
+}
+
+textarea {
+  resize: vertical;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-height: 150px;
+  margin-bottom: 10px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
   color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-start;
 }
 
-.App-link {
-  color: #61dafb;
+button:hover {
+  background-color: #0056b3;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.feedback {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow-y: auto;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.chat-input {
+  display: flex;
+}
+
+.chat-input textarea {
+  flex: 1;
+  margin-right: 10px;
+  min-height: 50px;
+}
+
+.chat-input button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+}
+
+.chat-input button:hover {
+  background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .lesson-detail-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
   }
-  to {
-    transform: rotate(360deg);
+
+  .quadrant-pdf,
+  .quadrant-feedback,
+  .quadrant-prompt,
+  .quadrant-editor {
+    grid-column: 1 / 2;
+    grid-row: auto;
   }
 }

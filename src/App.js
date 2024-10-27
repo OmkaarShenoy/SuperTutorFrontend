@@ -24,7 +24,7 @@ function App() {
     <MathJaxContext config={mathJaxConfig}>
       <Router>
         <div className="App">
-          <Header />
+
           <Routes>
             <Route path="/" element={<LessonList />} />
             <Route path="/create" element={<LessonCreator />} />

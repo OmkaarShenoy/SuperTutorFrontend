@@ -1,9 +1,9 @@
 /* src/styles.css */
 :root {
-  --bg-color: #181818; /* Dark background */
+  --bg-color: #0F0A19; /* Dark background */
   --box-bg-color: #282828; /* Lighter black for boxes */
   --primary-text-color: #f0f0f0; /* White text */
-  --secondary-text-color: #d0d0d0; /* Slightly grayish text for secondary content */
+  --secondary-text-color: #757575; /* Slightly grayish text for secondary content */
   --border-color: #333;
   --highlight-color: #4a90e2;
   --button-bg-color: #4a90e2;

@@ -45,6 +45,7 @@ const LessonCreator = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("handleSubmit called");
 
     // Validation: Ensure all fields are filled
     for (let i = 0; i < subLessons.length; i++) {
@@ -58,9 +59,9 @@ const LessonCreator = () => {
     }
 
     const newLesson = {
-        title, // Updated to match the new API structure
-        author, // Updated to match the new API structure
-        sublessons: subLessons, // Changed from sub_lessons to sublessons
+        title,
+        author,
+        sublessons: subLessons,
     };
 
     try {

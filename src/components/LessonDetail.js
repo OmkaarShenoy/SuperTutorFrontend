@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaChevronLeft, FaChevronRight, FaHome } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaHome, FaVolumeUp, FaPlay, FaStop } from 'react-icons/fa';
 import { IoIosCreate } from 'react-icons/io';
 import './LessonDetail.css';
 
@@ -13,11 +13,12 @@ const LessonDetail = () => {
   const [selectedSubLesson, setSelectedSubLesson] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userSolution, setUserSolution] = useState('');
-  const [renderedHtml, setRenderedHtml] = useState(''); // Stores the rendered HTML
+  const [renderedHtml, setRenderedHtml] = useState('');
   const [loading, setLoading] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
-  const [solutionInput, setSolutionInput] = useState(''); // Tracks typing input
+  const [solutionInput, setSolutionInput] = useState('');
+  const [promptAudio, setPromptAudio] = useState(null); // State for the prompt audio
 
   useEffect(() => {
     fetchLesson();
@@ -35,7 +36,7 @@ const LessonDetail = () => {
   };
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  
+
   const handleSolutionInputChange = (e) => {
     const newSolution = e.target.value;
     setUserSolution(newSolution);
@@ -47,7 +48,7 @@ const LessonDetail = () => {
       if (solutionInput.trim()) {
         handleSolutionChange(solutionInput);
       } else {
-        setRenderedHtml(''); // Clear the HTML view if input is empty
+        setRenderedHtml('');
       }
     }, 2000);
 
@@ -73,51 +74,52 @@ const LessonDetail = () => {
         }
       );
 
-      setRenderedHtml(response.data.output || ''); // Set rendered HTML from the response
+      setRenderedHtml(response.data.output || '');
     } catch (error) {
       console.error('Error rendering solution:', error);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (userSolution.trim() === '') {
       alert('Please enter your solution.');
       return;
     }
-  
+
     setLoading(true);
-  
+
     const subLessonId = lesson.sublessons.indexOf(selectedSubLesson);
-    if (subLessonId === -1) {  // Update this condition
+    if (subLessonId === -1) {
       console.error("Sublesson ID not found");
       alert('Unable to find the sublesson ID.');
       setLoading(false);
       return;
     }
-  
+
     try {
       const response = await axios.post(
         `${HOST}/lessons/${id}/${subLessonId}/submit`,
         null,
         {
           params: {
-            submission: userSolution,  // Make sure userSolution is used here
+            submission: userSolution,
             check_solution: true,
           },
         }
       );
-  
+
       const feedback = response.data.success
         ? 'Correct! Well done.'
         : `Incorrect. ${response.data.problem || 'Check your solution.'} Hint: ${response.data.hint || ''}`;
-  
+
       setChatMessages((prevMessages) => [
         ...prevMessages,
         { sender: 'ai', message: feedback },
       ]);
-  
-      setRenderedHtml(response.data.output || ''); // Set rendered HTML on submission
+
+      setRenderedHtml(response.data.output || '');
     } catch (error) {
       console.error('Error submitting solution:', error);
       alert('Failed to submit solution. Please try again.');
@@ -132,17 +134,30 @@ const LessonDetail = () => {
     if (chatInput.trim() === '') return;
 
     const userMessage = chatInput.trim();
-    setChatMessages([...chatMessages, { sender: 'user', message: userMessage }]);
+    const updatedChatMessages = [...chatMessages, { sender: 'user', message: userMessage }];
+
+    setChatMessages(updatedChatMessages);
     setChatInput('');
 
     try {
-      const subLessonId = selectedSubLesson?.id;
+      const subLessonId = lesson.sublessons.indexOf(selectedSubLesson);
+      if (subLessonId === -1) {
+        console.error("Sublesson ID not found");
+        return;
+      }
+
       const response = await axios.post(
         `${HOST}/lessons/${id}/${subLessonId}/chat`,
-        { message: userMessage }
+        {
+          submission: userSolution,
+          messages: updatedChatMessages.map((msg) => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.message,
+          })),
+        }
       );
 
-      const aiReply = response.data.reply;
+      const aiReply = response.data.content;
       setChatMessages((prevMessages) => [
         ...prevMessages,
         { sender: 'ai', message: aiReply },
@@ -153,6 +168,97 @@ const LessonDetail = () => {
         ...prevMessages,
         { sender: 'ai', message: 'Sorry, I could not process that.' },
       ]);
+    }
+  };
+
+  // Helper function to strip HTML tags
+  const stripHtml = (html) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || '';
+  };
+
+  // TTS Function for Prompt
+  const handlePromptTTS = async () => {
+    if (!selectedSubLesson || !selectedSubLesson.lesson_text) {
+      alert('No prompt available to convert to speech.');
+      return;
+    }
+
+    try {
+      // Remove HTML tags from the lesson_text
+      const plainText = stripHtml(selectedSubLesson.lesson_text);
+
+      // Send POST request to '/tts' with the text
+      const response = await axios.post(`${HOST}/tts`, {
+        text: plainText,
+        language: 'en-US',  // Optional: specify language
+        voice_name: 'en-US-Wavenet-D'  // Optional: specify voice
+      });
+
+      const audioUrl = response.data.audio_url;
+
+      // If an audio is already playing, stop it
+      if (promptAudio) {
+        promptAudio.pause();
+        promptAudio.currentTime = 0;
+      }
+
+      // Create a new Audio object and store it in state
+      const audio = new Audio(audioUrl);
+      setPromptAudio(audio);
+
+      // Play the audio
+      audio.play();
+
+      // Optional: Handle when the audio ends
+      audio.onended = () => {
+        setPromptAudio(null);
+      };
+
+    } catch (error) {
+      console.error('Error in TTS:', error);
+      alert('Failed to convert text to speech.');
+    }
+  };
+
+  // Function to stop the prompt audio
+  const handlePromptStop = () => {
+    if (promptAudio) {
+      promptAudio.pause();
+      promptAudio.currentTime = 0;
+      setPromptAudio(null);
+    }
+  };
+
+  // TTS Function
+  const handleTTS = async () => {
+    // Find the latest AI message
+    const latestAIMessages = chatMessages.filter(msg => msg.sender === 'ai');
+    if (latestAIMessages.length === 0) {
+      alert('No AI messages to convert to speech.');
+      return;
+    }
+
+    const latestAIMessage = latestAIMessages[latestAIMessages.length - 1];
+
+    try {
+      // Send POST request to '/tts' with the text
+      const response = await axios.post(`${HOST}/tts`, {
+        text: latestAIMessage.message,
+        language: 'en-US',  // Optional: specify language
+        voice_name: 'en-US-Wavenet-D'  // Optional: specify voice
+      });
+
+      const audioUrl = response.data.audio_url;
+
+      // Play the audio
+      const audio = new Audio(audioUrl);
+      audio.play();
+
+    } catch (error) {
+      console.error('Error in TTS:', error);
+      alert('Failed to convert text to speech.');
     }
   };
 
@@ -201,7 +307,7 @@ const LessonDetail = () => {
                 transition: 'left 0.3s',
               }}
             >
-              {sidebarOpen ? <FaChevronLeft size={30}/> : <FaChevronRight size={30}/>}
+              {sidebarOpen ? <FaChevronLeft size={30} /> : <FaChevronRight size={30} />}
             </button>
           </li>
         </ul>
@@ -231,6 +337,14 @@ const LessonDetail = () => {
         {/* Top Left Quadrant: Prompt and Question */}
         <div className="quadrant quadrant-prompt">
           <div dangerouslySetInnerHTML={{ __html: selectedSubLesson?.lesson_text }} />
+          <div className="tts-controls">
+          <button onClick={handlePromptTTS} className="tts-button" disabled={promptAudio !== null}>
+            <FaPlay size={20} />
+          </button>
+          <button onClick={handlePromptStop} className="tts-button" disabled={promptAudio === null}>
+            <FaStop size={20} />
+          </button>
+          </div>
         </div>
 
         {/* Top Right Quadrant: Rendered Solution HTML */}
@@ -279,7 +393,10 @@ const LessonDetail = () => {
                 required
                 style={{ resize: 'vertical' }}
               ></textarea>
-              <button type="submit">Send</button>
+              <div className="chat-buttons">
+                <button type="submit">Send</button>
+                <button type="button" onClick={handleTTS}>TTS</button>
+              </div>
             </form>
           </div>
         </div>

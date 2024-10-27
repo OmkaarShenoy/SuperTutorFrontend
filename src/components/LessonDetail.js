@@ -147,20 +147,21 @@ const LessonDetail = () => {
       }
 
       const response = await axios.post(
-        `${HOST}/lessons/${id}/${subLessonId}/chat`,
+        `${HOST}/lessons/${id}/${subLessonId}/chat`, updatedChatMessages.map((msg) => ({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.message,
+        })),
         {
-          submission: userSolution,
-          messages: updatedChatMessages.map((msg) => ({
-            role: msg.sender === 'user' ? 'user' : 'assistant',
-            content: msg.message,
-          })),
+          params: {
+            submission: userSolution,
+          }
         }
       );
 
       const aiReply = response.data.content;
       setChatMessages((prevMessages) => [
         ...prevMessages,
-        { sender: 'ai', message: aiReply },
+        { sender: 'assistant', message: aiReply },
       ]);
     } catch (error) {
       console.error('Error in chat:', error);
@@ -338,12 +339,12 @@ const LessonDetail = () => {
         <div className="quadrant quadrant-prompt">
           <div dangerouslySetInnerHTML={{ __html: selectedSubLesson?.lesson_text }} />
           <div className="tts-controls">
-          <button onClick={handlePromptTTS} className="tts-button" disabled={promptAudio !== null}>
-            <FaPlay size={20} />
-          </button>
-          <button onClick={handlePromptStop} className="tts-button" disabled={promptAudio === null}>
-            <FaStop size={20} />
-          </button>
+            <button onClick={handlePromptTTS} className="tts-button" disabled={promptAudio !== null}>
+              <FaPlay size={20} />
+            </button>
+            <button onClick={handlePromptStop} className="tts-button" disabled={promptAudio === null}>
+              <FaStop size={20} />
+            </button>
           </div>
         </div>
 

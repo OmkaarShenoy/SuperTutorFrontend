@@ -231,7 +231,7 @@ const LessonDetail = () => {
     }
   };
 
-  // TTS Function
+  // TTS Function for AI Messages
   const handleTTS = async () => {
     // Find the latest AI message
     const latestAIMessages = chatMessages.filter(msg => msg.sender === 'ai');
@@ -265,6 +265,9 @@ const LessonDetail = () => {
   if (!lesson) {
     return <div style={{ padding: '20px' }}>Loading...</div>;
   }
+
+  // Determine if the current lesson type is 'text'
+  const isTextLesson = selectedSubLesson?.lesson_type === 'text';
 
   return (
     <div className="lesson-detail-container" style={{ display: 'flex' }}>
@@ -332,29 +335,40 @@ const LessonDetail = () => {
         </ul>
       </div>
 
-      {/* Main Content Area with Four Quadrants */}
-      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '20px', padding: '20px' }}>
+      {/* Main Content Area */}
+      <div
+        style={{
+          flex: 1,
+          display: 'grid',
+          gridTemplateColumns: isTextLesson ? '1fr 1fr' : '1fr 1fr',
+          gridTemplateRows: isTextLesson ? '1fr 1fr' : '1fr 1fr',
+          gap: '20px',
+          padding: '20px'
+        }}
+      >
         {/* Top Left Quadrant: Prompt and Question */}
-        <div className="quadrant quadrant-prompt">
+        <div className="quadrant quadrant-prompt" style={{ gridColumn: 1, gridRow: 1 }}>
           <div dangerouslySetInnerHTML={{ __html: selectedSubLesson?.lesson_text }} />
-          <div className="tts-controls">
-          <button onClick={handlePromptTTS} className="tts-button" disabled={promptAudio !== null}>
-            <FaPlay size={20} />
-          </button>
-          <button onClick={handlePromptStop} className="tts-button" disabled={promptAudio === null}>
-            <FaStop size={20} />
-          </button>
+          <div className="tts-controls" style={{ position: 'sticky', bottom: '10px', right: '10px' }}>
+            <button onClick={handlePromptTTS} className="tts-button" disabled={promptAudio !== null}>
+              <FaPlay size={20} />
+            </button>
+            <button onClick={handlePromptStop} className="tts-button" disabled={promptAudio === null}>
+              <FaStop size={20} />
+            </button>
           </div>
         </div>
 
-        {/* Top Right Quadrant: Rendered Solution HTML */}
-        <div className="quadrant quadrant-html">
-          <h2>Rendered Solution</h2>
-          <div dangerouslySetInnerHTML={{ __html: renderedHtml }} />
-        </div>
+        {/* Conditionally Rendered Solution Quadrant */}
+        {!isTextLesson && (
+          <div className="quadrant quadrant-html" style={{ gridColumn: 2, gridRow: 1 }}>
+            <h2>Rendered Solution</h2>
+            <div dangerouslySetInnerHTML={{ __html: renderedHtml }} />
+          </div>
+        )}
 
         {/* Bottom Left Quadrant: Solution Editor */}
-        <div className="quadrant quadrant-editor">
+        <div className="quadrant quadrant-editor" style={{ gridColumn: 1, gridRow: isTextLesson ? 2 : 2 }}>
           <h2>Your Solution</h2>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <textarea
@@ -370,8 +384,15 @@ const LessonDetail = () => {
           </form>
         </div>
 
-        {/* Bottom Right Quadrant: Chat Section */}
-        <div className="quadrant quadrant-feedback">
+        {/* AI Chat Section */}
+        <div
+          className="quadrant quadrant-feedback"
+          style={{
+            gridColumn: isTextLesson ? '2 / 3' : '2 / 3',
+            gridRow: isTextLesson ? '1 / 3' : '2 / 3',
+            height: isTextLesson ? '100%' : 'auto',
+          }}
+        >
           <h2>Chat with AI</h2>
           <div className="chat-container">
             <div className="chat-messages">

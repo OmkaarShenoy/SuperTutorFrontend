@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import './LessonList.css';
 
 const HOST = 'https://tutor-backend.lokegaonkar.in';
@@ -25,7 +25,7 @@ const LessonList = () => {
 
   return (
     <div className="lesson-list-container">
-      <h1 className="project-title">SuperTutor</h1>
+      <h1 className="project-title" ><NavLink to="/" style ={{textDecoration: 'none', color: 'white'}}>SuperTutor</NavLink></h1>
       <div className="button-container">
         <button className="create-button" onClick={() => navigate('/create')}>
           + Create New Lesson

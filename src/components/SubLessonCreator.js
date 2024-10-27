@@ -133,6 +133,7 @@ const SubLessonCreator = () => {
             style={{ width: '100%', padding: '8px', fontSize: '16px' }}
           >
             <option value="latex">LaTeX</option>
+            <option value="text">Text</option>
             <option value="linux">Linux</option>
           </select>
         </div>

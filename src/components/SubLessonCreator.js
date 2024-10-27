@@ -73,6 +73,9 @@ const SubLessonCreator = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+      <button onClick={() => navigate(-1)} style={{ marginBottom: '20px', padding: '10px 20px', fontSize: '16px' }}>
+        Back
+      </button>
       <h1>Add a Sub-Lesson</h1>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>

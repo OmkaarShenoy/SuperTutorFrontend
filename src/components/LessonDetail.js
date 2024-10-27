@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaChevronLeft, FaChevronRight, FaHome, FaVolumeUp, FaPlay, FaStop } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaHome, FaPlay, FaStop } from 'react-icons/fa';
 import { IoIosCreate } from 'react-icons/io';
 import './LessonDetail.css';
 
@@ -22,7 +22,19 @@ const LessonDetail = () => {
 
   useEffect(() => {
     fetchLesson();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  useEffect(() => {
+    if (selectedSubLesson && selectedSubLesson.solution_boilerplate) {
+      setUserSolution(selectedSubLesson.solution_boilerplate);
+      setSolutionInput(selectedSubLesson.solution_boilerplate);
+    } else {
+      setUserSolution('');
+      setSolutionInput('');
+    }
+  }, [selectedSubLesson]);
+  
 
   const fetchLesson = async () => {
     try {
@@ -53,6 +65,7 @@ const LessonDetail = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solutionInput]);
 
   const handleSolutionChange = async (solution) => {
@@ -147,21 +160,20 @@ const LessonDetail = () => {
       }
 
       const response = await axios.post(
-        `${HOST}/lessons/${id}/${subLessonId}/chat`, updatedChatMessages.map((msg) => ({
-          role: msg.sender === 'user' ? 'user' : 'assistant',
-          content: msg.message,
-        })),
+        `${HOST}/lessons/${id}/${subLessonId}/chat`,
         {
-          params: {
-            submission: userSolution,
-          }
+          submission: userSolution,
+          messages: updatedChatMessages.map((msg) => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.message,
+          })),
         }
       );
 
       const aiReply = response.data.content;
       setChatMessages((prevMessages) => [
         ...prevMessages,
-        { sender: 'assistant', message: aiReply },
+        { sender: 'ai', message: aiReply },
       ]);
     } catch (error) {
       console.error('Error in chat:', error);
@@ -341,8 +353,8 @@ const LessonDetail = () => {
         style={{
           flex: 1,
           display: 'grid',
-          gridTemplateColumns: isTextLesson ? '1fr 1fr' : '1fr 1fr',
-          gridTemplateRows: isTextLesson ? '1fr 1fr' : '1fr 1fr',
+          gridTemplateColumns: '1fr 1fr', // Equal widths for both columns
+          gridTemplateRows: '1fr 1fr',    // Two rows
           gap: '20px',
           padding: '20px'
         }}
@@ -350,7 +362,7 @@ const LessonDetail = () => {
         {/* Top Left Quadrant: Prompt and Question */}
         <div className="quadrant quadrant-prompt" style={{ gridColumn: 1, gridRow: 1 }}>
           <div dangerouslySetInnerHTML={{ __html: selectedSubLesson?.lesson_text }} />
-          <div className="tts-controls" style={{ position: 'sticky', bottom: '10px', right: '10px' }}>
+          <div className="tts-controls" style={{ position: 'sticky', bottom: '10px', right: '10px', display: 'flex', justifyContent: 'flex-end' }}>
             <button onClick={handlePromptTTS} className="tts-button" disabled={promptAudio !== null}>
               <FaPlay size={20} />
             </button>
@@ -369,7 +381,7 @@ const LessonDetail = () => {
         )}
 
         {/* Bottom Left Quadrant: Solution Editor */}
-        <div className="quadrant quadrant-editor" style={{ gridColumn: 1, gridRow: isTextLesson ? 2 : 2 }}>
+        <div className="quadrant quadrant-editor" style={{ gridColumn: 1, gridRow: 2 }}>
           <h2>Your Solution</h2>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <textarea
@@ -389,9 +401,9 @@ const LessonDetail = () => {
         <div
           className="quadrant quadrant-feedback"
           style={{
-            gridColumn: isTextLesson ? '2 / 3' : '2 / 3',
-            gridRow: isTextLesson ? '1 / 3' : '2 / 3',
-            height: isTextLesson ? '100%' : 'auto',
+            gridColumn: '2 / 3', // Always in the second column
+            gridRow: isTextLesson ? '1 / 3' : '2 / 3',    // Span both rows if 'text', else only second row
+            height: isTextLesson ? '100%' : 'auto',       // Full height if 'text'
           }}
         >
           <h2>Chat with AI</h2>

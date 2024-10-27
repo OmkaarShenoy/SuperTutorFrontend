@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const HOST = 'http://localhost:8000';
+const HOST = 'https://tutor-backend.lokegaonkar.in'
 
 const SubLessonCreator = () => {
   const [lessons, setLessons] = useState([]);

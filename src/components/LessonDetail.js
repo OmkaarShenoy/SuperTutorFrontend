@@ -7,7 +7,7 @@ import { IoIosCreate } from 'react-icons/io';
 import './LessonDetail.css';
 
 const LessonDetail = () => {
-  const HOST = 'http://localhost:8000';
+  const HOST = 'https://tutor-backend.lokegaonkar.in';
   const { id } = useParams();
   const [lesson, setLesson] = useState(null);
   const [selectedSubLesson, setSelectedSubLesson] = useState(null);
@@ -50,7 +50,7 @@ const LessonDetail = () => {
       } else {
         setRenderedHtml('');
       }
-    }, 2000);
+    }, 500);
 
     return () => clearTimeout(delayDebounceFn);
   }, [solutionInput]);

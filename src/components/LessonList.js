@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './LessonList.css';
 
-const HOST = 'http://localhost:8000';
+const HOST = 'https://tutor-backend.lokegaonkar.in';
 
 const LessonList = () => {
   const [lessons, setLessons] = useState([]);

@@ -160,13 +160,14 @@ const LessonDetail = () => {
       }
 
       const response = await axios.post(
-        `${HOST}/lessons/${id}/${subLessonId}/chat`,
+        `${HOST}/lessons/${id}/${subLessonId}/chat`, updatedChatMessages.map((msg) => ({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.message,
+        })),
         {
-          submission: userSolution,
-          messages: updatedChatMessages.map((msg) => ({
-            role: msg.sender === 'user' ? 'user' : 'assistant',
-            content: msg.message,
-          })),
+          params: {
+          submission: userSolution ,
+          }
         }
       );
 

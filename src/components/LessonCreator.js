@@ -1,8 +1,9 @@
-// src/components/LessonCreator.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-const HOST = 'https://tutor-backend.lokegaonkar.in'
+import './LessonCreator.css';
+
+const HOST = 'https://tutor-backend.lokegaonkar.in';
 
 const LessonCreator = () => {
   const [title, setTitle] = useState('');
@@ -43,129 +44,120 @@ const LessonCreator = () => {
     updatedSubLessons.splice(index, 1);
     setSubLessons(updatedSubLessons);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("handleSubmit called");
 
-    // Validation: Ensure all fields are filled
+    // Validate all sub-lesson fields
     for (let i = 0; i < subLessons.length; i++) {
-        const sub = subLessons[i];
-        for (const key in sub) {
-            if (sub[key].trim() === '') {
-                alert(`Please fill out all fields for Sub-Lesson ${i + 1}.`);
-                return;
-            }
+      const sub = subLessons[i];
+      for (const key in sub) {
+        if (sub[key].trim() === '') {
+          alert(`Please fill out all fields for Sub-Lesson ${i + 1}.`);
+          return;
         }
+      }
     }
 
-    const newLesson = {
-        title,
-        author,
-        sublessons: subLessons,
-    };
+    const newLesson = { title, author, sublessons: subLessons };
 
     try {
-        await axios.post(`${HOST}/lessons/`, newLesson, {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
-        alert('Lesson created successfully!');
-        navigate('/learn');
+      await axios.post(`${HOST}/lessons/`, newLesson, {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      alert('Lesson created successfully!');
+      navigate('/learn');
     } catch (error) {
-        console.error('Error creating lesson:', error);
-        alert('Failed to create lesson. Please try again.');
+      console.error('Error creating lesson:', error);
+      alert('Failed to create lesson. Please try again.');
     }
-};
+  };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <button onClick={() => navigate(-1)} style={{ marginBottom: '20px', padding: '10px 20px', fontSize: '16px' }}>
+    <div className="lesson-creator-container">
+      <button onClick={() => navigate(-1)} className="back-button">
         Back
       </button>
-      <h1>Create a New Lesson</h1>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Lesson Title:</label>
+      <h1 className="form-title">Create a New Lesson</h1>
+      <form onSubmit={handleSubmit} className="lesson-form">
+        <div className="form-group">
+          <label>Lesson Title:</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', fontSize: '16px' }}
+            placeholder="Enter lesson title..."
           />
         </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Author:</label>
+        <div className="form-group">
+          <label>Author:</label>
           <input
             type="text"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', fontSize: '16px' }}
+            placeholder="Enter author name..."
           />
         </div>
-        <hr />
+        <hr className="section-divider" />
         {subLessons.map((subLesson, index) => (
-    <div key={index} style={{ marginBottom: '30px', border: '1px solid #ccc', padding: '15px', borderRadius: '8px' }}>
-        <h2>Sub-Lesson {index + 1}</h2>
-        <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Sub-Lesson Title:</label>
-            <input
+          <div key={index} className="sublesson-container">
+            <h2>Sub-Lesson {index + 1}</h2>
+            <div className="form-group">
+              <label>Sub-Lesson Title:</label>
+              <input
                 type="text"
                 value={subLesson.title}
                 onChange={(e) => handleSubLessonChange(index, 'title', e.target.value)}
                 required
-                style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-            />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Prompt:</label>
-            <textarea
+                placeholder="Enter sub-lesson title..."
+              />
+            </div>
+            <div className="form-group">
+              <label>Prompt:</label>
+              <textarea
                 value={subLesson.prompt}
                 onChange={(e) => handleSubLessonChange(index, 'prompt', e.target.value)}
                 required
+                placeholder="Enter the prompt..."
                 rows="3"
-                style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-            ></textarea>
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Question:</label>
-            <textarea
+              ></textarea>
+            </div>
+            <div className="form-group">
+              <label>Question:</label>
+              <textarea
                 value={subLesson.question}
                 onChange={(e) => handleSubLessonChange(index, 'question', e.target.value)}
                 required
+                placeholder="Enter the question..."
                 rows="3"
-                style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-            ></textarea>
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Solution Boilerplate:</label>
-            <textarea
+              ></textarea>
+            </div>
+            <div className="form-group">
+              <label>Solution Boilerplate:</label>
+              <textarea
                 value={subLesson.solutionBoilerplate}
                 onChange={(e) => handleSubLessonChange(index, 'solutionBoilerplate', e.target.value)}
                 required
+                placeholder="Enter the solution boilerplate..."
                 rows="4"
-                style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-            ></textarea>
-        </div>
-        {subLessons.length > 1 && (
-            <button
-                type="button"
-                onClick={() => removeSubLesson(index)}
-                style={{ backgroundColor: 'var(--accent-color)', color: '#fff', padding: '8px 12px', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
-            >
+              ></textarea>
+            </div>
+            {subLessons.length > 1 && (
+              <button type="button" onClick={() => removeSubLesson(index)} className="remove-sublesson-button">
                 Remove Sub-Lesson
-            </button>
-        )}
-    </div>
-))}
-        <button type="button" onClick={addSubLesson} style={{ marginBottom: '20px', padding: '10px 15px', fontSize: '16px' }}>
+              </button>
+            )}
+          </div>
+        ))}
+        <button type="button" onClick={addSubLesson} className="add-sublesson-button">
           Add Another Sub-Lesson
         </button>
-        <br />
-        <button type="submit" style={{ padding: '10px 20px', fontSize: '16px' }}>
+        <button type="submit" className="submit-button">
           Create Lesson
         </button>
       </form>

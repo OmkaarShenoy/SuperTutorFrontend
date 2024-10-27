@@ -1,10 +1,13 @@
-// src/components/LessonList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import './LessonList.css';
+
+const HOST = 'http://localhost:8000';
 
 const LessonList = () => {
   const [lessons, setLessons] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchLessons();
@@ -12,8 +15,8 @@ const LessonList = () => {
 
   const fetchLessons = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/lessons'); // Fetch all lessons
-      setLessons(response.data); // Assuming response.data is an array of lesson objects
+      const response = await axios.get(`${HOST}/lessons`);
+      setLessons(response.data);
     } catch (error) {
       console.error('Error fetching lessons:', error);
       alert('Failed to fetch lessons. Please try again later.');
@@ -21,21 +24,26 @@ const LessonList = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Available Lessons</h1>
+    <div className="lesson-list-container">
+      <h1 className="project-title">SuperTutor</h1>
+      <div className="button-container">
+        <button className="create-button" onClick={() => navigate('/create')}>
+          + Create New Lesson
+        </button>
+      </div>
       {lessons.length === 0 ? (
         <p>No lessons available. Please check back later.</p>
       ) : (
-        <ul style={{ padding: 0, listStyle: 'none' }}>
+        <div className="lesson-grid">
           {lessons.map((lesson) => (
-            <li key={lesson.id} style={{ margin: '15px 0', padding: '10px', border: '1px solid #ccc', borderRadius: '8px' }}>
-              <Link to={`/lessons/${lesson.id}`} style={{ textDecoration: 'none', color: '#007bff', fontSize: '20px' }}>
+            <Link to={`/lessons/${lesson.id}`} className="lesson-title">
+            <div key={lesson.id} className="lesson-card">
                 {lesson.title}
-              </Link>
-              <p>By: {lesson.author}</p>
-            </li>
+              <p className="lesson-author">By: {lesson.author}</p>
+            </div>
+            </Link>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

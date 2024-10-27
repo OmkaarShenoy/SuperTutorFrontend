@@ -33,7 +33,7 @@
 
 .quadrant-prompt p {
   font-size: 14px;
-  color: var(--secondary-text-color);
+  color: var(--primary-text-color);
   line-height: 1.6;
 }
 
@@ -45,6 +45,12 @@
   grid-column: 2 / 3;
   grid-row: 1 / 2;
   background-color: var(--box-bg-color);
+  color: var(--primary-text-color);
+}
+
+.quadrant-html p {
+  color: var(--primary-text-color);
+  font-size: 20px;
 }
 
 .quadrant-editor {
@@ -63,8 +69,7 @@ textarea {
   border: 1px solid var(--border-color);
   border-radius: 6px;
   min-height: 150px;
-  margin-bottom: 10px;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'var(--font-family)';
   transition: border-color 0.2s ease;
 }
 
@@ -77,12 +82,12 @@ button {
   padding: 10px 20px;
   font-size: 14px;
   color: #fff;
-  background-color: var(--button-bg-color);
+  background-color: var(--accent-color);
   border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  align-self: flex-start;
+  align-self: stretch;
 }
 
 button:hover {
@@ -141,9 +146,9 @@ button:hover {
 }
 
 .chat-input button {
-  padding: 10px 20px;
+  padding: 15px 20px;
   font-size: 14px;
-  background-color: var(--highlight-color);
+  background-color: var(--accent-color);
   color: white;
   border-radius: 6px;
   border: none;

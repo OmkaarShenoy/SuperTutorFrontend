@@ -1,18 +1,26 @@
 /* src/styles.css */
 :root {
-  --bg-color: #0F0A19; /* Dark background */
+  --bg-color: #1A1A1A; /* Dark background */
   --box-bg-color: #282828; /* Lighter black for boxes */
   --primary-text-color: #f0f0f0; /* White text */
   --secondary-text-color: #757575; /* Slightly grayish text for secondary content */
   --border-color: #333;
   --highlight-color: #4a90e2;
   --button-bg-color: #4a90e2;
-  --button-hover-bg-color: #357abd;
+  --button-hover-bg-color: #cc8e39;
   --feedback-bg-color: #1f1f1f;
   --chat-bg-color: #1b1b1b;
   --error-color: #d9534f;
-  
-  --font-family: 'Roboto', sans-serif;
+  --accent-color: #FFB347;
+  --font-family: 'Crimson Pro';
+}
+
+
+.crimson-pro-font {
+  font-family: "Crimson Pro";
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
 }
 
 body {

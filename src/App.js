@@ -5,6 +5,7 @@ import Header from './components/Header';
 import LessonList from './components/LessonList';
 import LessonCreator from './components/LessonCreator';
 import LessonDetail from './components/LessonDetail';
+import LandingPage from './components/LandingPage';
 import { MathJaxContext } from 'better-react-mathjax';
 import './styles.css'; // Import global styles
 import './App.css';
@@ -26,7 +27,8 @@ function App() {
         <div className="App">
 
           <Routes>
-            <Route path="/" element={<LessonList />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/learn" element={<LessonList />} />
             <Route path="/create" element={<LessonCreator />} />
             <Route path="/lessons/:id" element={<LessonDetail />} />
           </Routes>

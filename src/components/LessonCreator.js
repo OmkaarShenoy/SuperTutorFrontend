@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+const HOST = 'http://localhost:8000'
 
 const LessonCreator = () => {
   const [title, setTitle] = useState('');
@@ -31,7 +32,7 @@ const LessonCreator = () => {
         title: '',
         prompt: '',
         question: '',
-        type: 'latex',
+        type: 'linux',
         solutionBoilerplate: '',
       },
     ]);
@@ -42,36 +43,40 @@ const LessonCreator = () => {
     updatedSubLessons.splice(index, 1);
     setSubLessons(updatedSubLessons);
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation: Ensure all fields are filled
     for (let i = 0; i < subLessons.length; i++) {
-      const sub = subLessons[i];
-      for (const key in sub) {
-        if (sub[key].trim() === '') {
-          alert(`Please fill out all fields for Sub-Lesson ${i + 1}.`);
-          return;
+        const sub = subLessons[i];
+        for (const key in sub) {
+            if (sub[key].trim() === '') {
+                alert(`Please fill out all fields for Sub-Lesson ${i + 1}.`);
+                return;
+            }
         }
-      }
     }
 
     const newLesson = {
-      title,
-      author,
-      sub_lessons: subLessons,
+        title, // Updated to match the new API structure
+        author, // Updated to match the new API structure
+        sublessons: subLessons, // Changed from sub_lessons to sublessons
     };
 
     try {
-      await axios.post('http://localhost:8000/lessons', newLesson);
-      alert('Lesson created successfully!');
-      navigate('/');
+        await axios.post(`${HOST}/lessons/`, newLesson, {
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        });
+        alert('Lesson created successfully!');
+        navigate('/learn');
     } catch (error) {
-      console.error('Error creating lesson:', error);
-      alert('Failed to create lesson. Please try again.');
+        console.error('Error creating lesson:', error);
+        alert('Failed to create lesson. Please try again.');
     }
-  };
+};
 
   return (
     <div style={{ padding: '20px' }}>
@@ -99,59 +104,59 @@ const LessonCreator = () => {
         </div>
         <hr />
         {subLessons.map((subLesson, index) => (
-          <div key={index} style={{ marginBottom: '30px', border: '1px solid #ccc', padding: '15px', borderRadius: '8px' }}>
-            <h2>Sub-Lesson {index + 1}</h2>
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ display: 'block', marginBottom: '5px' }}>Sub-Lesson Title:</label>
-              <input
+    <div key={index} style={{ marginBottom: '30px', border: '1px solid #ccc', padding: '15px', borderRadius: '8px' }}>
+        <h2>Sub-Lesson {index + 1}</h2>
+        <div style={{ marginBottom: '10px' }}>
+            <label style={{ display: 'block', marginBottom: '5px' }}>Sub-Lesson Title:</label>
+            <input
                 type="text"
                 value={subLesson.title}
                 onChange={(e) => handleSubLessonChange(index, 'title', e.target.value)}
                 required
                 style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-              />
-            </div>
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ display: 'block', marginBottom: '5px' }}>Prompt:</label>
-              <textarea
+            />
+        </div>
+        <div style={{ marginBottom: '10px' }}>
+            <label style={{ display: 'block', marginBottom: '5px' }}>Prompt:</label>
+            <textarea
                 value={subLesson.prompt}
                 onChange={(e) => handleSubLessonChange(index, 'prompt', e.target.value)}
                 required
                 rows="3"
                 style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-              ></textarea>
-            </div>
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ display: 'block', marginBottom: '5px' }}>Question:</label>
-              <textarea
+            ></textarea>
+        </div>
+        <div style={{ marginBottom: '10px' }}>
+            <label style={{ display: 'block', marginBottom: '5px' }}>Question:</label>
+            <textarea
                 value={subLesson.question}
                 onChange={(e) => handleSubLessonChange(index, 'question', e.target.value)}
                 required
                 rows="3"
                 style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-              ></textarea>
-            </div>
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ display: 'block', marginBottom: '5px' }}>Solution Boilerplate:</label>
-              <textarea
+            ></textarea>
+        </div>
+        <div style={{ marginBottom: '10px' }}>
+            <label style={{ display: 'block', marginBottom: '5px' }}>Solution Boilerplate:</label>
+            <textarea
                 value={subLesson.solutionBoilerplate}
                 onChange={(e) => handleSubLessonChange(index, 'solutionBoilerplate', e.target.value)}
                 required
                 rows="4"
                 style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-              ></textarea>
-            </div>
-            {subLessons.length > 1 && (
-              <button
+            ></textarea>
+        </div>
+        {subLessons.length > 1 && (
+            <button
                 type="button"
                 onClick={() => removeSubLesson(index)}
-                style={{ backgroundColor: '#dc3545', color: '#fff', padding: '8px 12px', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
-              >
+                style={{ backgroundColor: 'var(--accent-color)', color: '#fff', padding: '8px 12px', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
+            >
                 Remove Sub-Lesson
-              </button>
-            )}
-          </div>
-        ))}
+            </button>
+        )}
+    </div>
+))}
         <button type="button" onClick={addSubLesson} style={{ marginBottom: '20px', padding: '10px 15px', fontSize: '16px' }}>
           Add Another Sub-Lesson
         </button>
